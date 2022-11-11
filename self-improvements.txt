@@ -1,0 +1,16 @@
+It would be nice to know what efforts we can apply to approach improvements. I have batch if Muthu allows :)
+
+What can i do every day:
+1. Read or investigate a lot of code every day.
+2. Subscribe to some amazing broadcasts: dev.to, stackoverflow.com, github projects sources etc.
+3. SOLID approach can help a lot: https://en.wikipedia.org/wiki/SOLID
+4. Try to play with some code or participate in playgrounds.
+5. Try to define a simple dev task and implement it weekly, make it as a hobby - it also will help you learn some new approaches and use some good patterns  automatically
+
+Keep in mind:
+1. Function size - less than 20(30) lines
+2. less than 3-5 actions per function
+3. File size less than 300 lines.
+4. File per class approach (until internal classes definition).
+5. Function should be able to be testet in a separate way.
+6. Follow the SOLID.

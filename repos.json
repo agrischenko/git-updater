@@ -1,0 +1,9 @@
+[
+    {
+      "name": "jenkins",
+      "folder": "~/tmp/repo-manager/jenkins4/",
+      "origin": "git@bitbucket.org:whatfix/whatfix-jenkins.git",
+      "dest": "feature/pod_desktop",
+      "source": "feature/development"
+    }
+]

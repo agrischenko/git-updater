@@ -1,0 +1,12 @@
+# local
+/.idea
+
+# production
+build/
+
+# dependencies
+node_modules/
+
+
+
+

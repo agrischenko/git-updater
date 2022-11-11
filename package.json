@@ -1,0 +1,25 @@
+{
+  "name": "git-repo-manager",
+  "version": "0.1.0",
+  "description": "Update local git repositories in a batch",
+  "main": "build/index.html",
+  "type2": "module",
+  "window": {
+    "frame": true,
+    "toolbar": true,
+    "width": 800,
+    "height": 600,
+    "position": "center"
+  },
+  "chromium-args": "--enable-logging=stderr --remote-debugging-port=9999",
+  "scripts": {
+    "start": "nw ."
+  },
+  "keywords": [
+    "NW",
+    "git",
+    "repo"
+  ],
+  "author": "Aleksey Grischenko",
+  "license": "Whatfix"
+}
