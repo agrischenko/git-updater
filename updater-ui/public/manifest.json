@@ -1,0 +1,8 @@
+{
+  "short_name": "Git Updater",
+  "name": "React Git Updater",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

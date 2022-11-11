@@ -1,0 +1,13 @@
+.App {
+    text-align: center;
+    min-height: 100vh;
+    color: white;
+
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.Header {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}

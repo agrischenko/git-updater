@@ -1,0 +1,19 @@
+.def-button {
+    font-family: courier, courier new, serif;
+
+    background: #266294;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+
+    padding: 10px;
+
+    width: 120px;
+    font-weight: bold;
+    color: whitesmoke;
+}
+
+.def-button.rounded {
+    border-radius: 7px;
+}
