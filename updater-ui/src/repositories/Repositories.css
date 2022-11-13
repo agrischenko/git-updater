@@ -37,6 +37,7 @@
 }
 
 .repo-refresh {
+    line-height: 26px;
     cursor: pointer;
     font-size: larger;
 }
@@ -45,13 +46,15 @@
     color: #D0D0D0;
 }
 
+.repo-refresh[data-enabled="false"] {
+    color: #D0D0D0;
+    cursor: none;
+    pointer-events: none;
+}
+
 .repo-btn-sync {
     font-size: larger;
     width: 100%;
-}
-
-.repo-btn-sync:hover {
-    background: #3672A4;
 }
 
 .repo-btn-sync.disabled {

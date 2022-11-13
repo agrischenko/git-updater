@@ -1,65 +1,71 @@
 import DataProvider from '../DataProvider';
+import {getRepoDispather, RepoActionType} from "../reducers";
+import {Status} from "./status";
 
-/**
- * Refreshes information about repository
- * resolves with true if sync is available
- * resolves with false if sync is unavailable
- * rejects on error
- */
-
-export const BEAN = {
-    FOLDER: 'FOLDER',
-    ORIGIN: 'ORIGIN',
+export function setRepositoryStatus(repo, status) {
+    getRepoDispather(repo)({type: RepoActionType.setStatus, value: status});
 }
 
-const STATUS = {
-    FOLDER_DOES_NOT_EXIST: 'folder does not exist',
-    FOLDER_IS_UNINITIALIZED: 'git folder is uninitialized',
+export function refreshRepository(repo) {
+    const dispatch = getRepoDispather(repo);
+    dispatch({type: RepoActionType.setFolderError, value: ''});
+    dispatch({type: RepoActionType.setOriginError, value: ''});
+    dispatch({type: RepoActionType.setFolderWarning, value: ''});
+    dispatch({type: RepoActionType.setOriginWarning, value: ''});
+    dispatch({type: RepoActionType.setCommonError, value: ''});
+
+
+    return Promise.resolve()
+        .then(() => setRepositoryStatus(repo, Status.Refreshing))
+        .then(() => __refreshRepository(repo))
+        .then(() => setRepositoryStatus(repo, Status.Idle));
 }
 
-export function refreshRepository (repo) {
-    console.debug('refreshing: ', repo.name);
+function __refreshRepository (repo) {
     const git = DataProvider.GitUtils;
     const node = DataProvider.Node;
-    return new Promise((resolve, reject) => {
-        const folderPath = node.__resolveHome(repo.folder);
+    const dispatch = getRepoDispather(repo);
 
-        if (!node.__fs_existsSync(folderPath))
-            return resolve({
-                bean: BEAN.FOLDER,
-                status:STATUS.FOLDER_DOES_NOT_EXIST
+    console.debug(`refreshing ${repo.name}...`);
+    const folderPath = node.__resolveHome(repo.folder);
+
+    if (!node.__fs_existsSync(folderPath)) {
+        return dispatch({
+            type: RepoActionType.setFolderWarning,
+            value: 'folder does not exist'
+        });
+    }
+
+    try {
+        git.isGitFolder(folderPath);
+    } catch (err) {
+        const __error = git.extractError(err);
+        console.log(__error)
+        if (git.isUninitializedGitFolderError(__error)) {
+            return dispatch({
+                type: RepoActionType.setFolderWarning,
+                value: 'git folder is uninitialized'
             });
-
-        try {
-            git.isGitFolder(folderPath);
-        } catch (err) {
-            const __error = git.extractError(err);
-            console.log(__error)
-            return git.isUninitializedGitFolderError(__error) ?
-                resolve({
-                    bean: BEAN.FOLDER,
-                    status: STATUS.FOLDER_IS_UNINITIALIZED
-                })
-                : reject({
-                    bean: BEAN.FOLDER,
-                    status: __error
-                });
-        }
-
-        let origin = '';
-        try {
-            origin = git.getOriginUrl(folderPath);
-            if (origin !== repo.origin)
-                return reject({
-                    bean: BEAN.ORIGIN,
-                    status: `mismatch: ${origin}`
-                });
-        } catch (err) {
-            return reject({
-                bean: BEAN.ORIGIN,
-                status: err.message || err
+        } else {
+            return dispatch({
+                type: RepoActionType.setFolderWarning,
+                value: __error
             });
         }
-    });
+    }
 
+    let origin = '';
+    try {
+        origin = git.getOriginUrl(folderPath);
+        if (origin !== repo.origin)
+            return dispatch({
+                type: RepoActionType.setOriginError,
+                value: `mismatch: ${origin}`
+            });
+    } catch (err) {
+        return dispatch({
+            type: RepoActionType.setOriginError,
+            value: err.message || err
+        });
+    }
 }

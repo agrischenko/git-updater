@@ -12,6 +12,15 @@
     width: 120px;
     font-weight: bold;
     color: whitesmoke;
+    user-select: none;
+}
+
+.def-button:hover {
+    background: #3672A4;
+}
+
+.def-button:active {
+    background: #165284;
 }
 
 .def-button.rounded {

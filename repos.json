@@ -5,5 +5,13 @@
       "origin": "git@bitbucket.org:whatfix/whatfix-jenkins.git",
       "dest": "feature/pod_desktop",
       "source": "feature/development"
-    }
+    },
+  {
+    "name": "ansible",
+    "folder": "~/tmp/repo-manager/ansible/",
+    "origin": "git@bitbucket.org:whatfix/whatfix-jenkins.git",
+    "dest": "feature/pod_desktop",
+    "source": "feature/development"
+  }
+
 ]
