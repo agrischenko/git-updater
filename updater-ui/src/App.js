@@ -22,7 +22,10 @@ function App() {
                         onClick={() => Controller.refreshAll(repos)}>
                     Refresh All
                 </Button>
-                <Button className={'rounded'}>Sync All</Button>
+                <Button className={'rounded'}
+                        onClick={() => Controller.syncAll(repos)}>
+                    Sync All
+                </Button>
             </div>
             <Repositories items={repos}/>
         </div>

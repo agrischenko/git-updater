@@ -1,6 +1,11 @@
 import {Status} from "./status";
 
 let repoDispatchers = new Map();
+let repoItems = new Map();
+
+function getRepo(state) {
+    return repoItems.get(state.name) || {};
+}
 
 export const ActionType = {
     setStatus: 'setStatus',
@@ -15,22 +20,31 @@ export const ActionType = {
 export function reducer (state, action) {
     switch(action.type) {
         case ActionType.setStatus:
-            return Object.assign({}, state, {status: action.value});
+            state = Object.assign({}, state, {status: action.value});
+            break;
         case ActionType.setFolderError:
-            return Object.assign({}, state, {folderError: action.value});
+            state = Object.assign({}, state, {folderError: action.value});
+            break;
         case ActionType.setFolderWarning:
-            return Object.assign({}, state, {folderWarning: action.value});
+            state = Object.assign({}, state, {folderWarning: action.value});
+            break;
         case ActionType.setOriginError:
-            return Object.assign({}, state, {originError: action.value});
+            state = Object.assign({}, state, {originError: action.value});
+            break;
         case ActionType.setOriginWarning:
-            return Object.assign({}, state, {originWarning: action.value});
+            state = Object.assign({}, state, {originWarning: action.value});
+            break;
         case ActionType.setCommonError:
-            return Object.assign({}, state, {commonError: action.value});
+            state = Object.assign({}, state, {commonError: action.value});
+            break;
         case ActionType.setSyncEnabled:
-            return Object.assign({}, state, {syncEnabled: action.value});
+            state = Object.assign({}, state, {syncEnabled: action.value});
+            break;
         default:
             throw new Error();
     }
+    updateRepo(state);
+    return state;
 }
 
 export function getDefaultState (repo) {
@@ -41,11 +55,16 @@ function getDispather (state) {
     return repoDispatchers.get(state.name);
 }
 
-export function setDispatcher (state, dispatch) {
+export function createDispatcher (state, dispatch) {
     const {name} = state;
     if (!!repoDispatchers.get(name))
         return;
     repoDispatchers.set(name, dispatch);
+    updateRepo(state);
+}
+
+export function updateRepo (state) {
+    repoItems.set(state.name, state);
 }
 
 export function setStatus(state, status) {
@@ -70,5 +89,5 @@ export function setSyncEnabled(state, value) {
     getDispather(state)({type: ActionType.setSyncEnabled, value});
 }
 export function isSyncEnabled(state) {
-    return state.syncEnabled === true;
+    return getRepo(state).syncEnabled === true;
 }

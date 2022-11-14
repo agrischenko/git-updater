@@ -17,17 +17,26 @@ export function refresh(state) {
         .finally(() => Reducer.setStatus(state, Status.Idle));
 }
 
-function __refreshRepository (repo) {
+export function sync(state) {
+    return Promise.resolve()
+        .then(() => refresh(state))
+        .then(() => Reducer.setStatus(state, Status.Syncing))
+        .then(() => __syncRepository(state))
+        .catch(() => {})
+        .finally(() => Reducer.setStatus(state, Status.Idle));
+}
+
+function __refreshRepository (state) {
     const git = DataProvider.GitUtils;
     const node = DataProvider.Node;
 
     return new Promise((resolve, reject) => {
 
-        console.debug(`refreshing ${repo.name}...`);
-        const folderPath = node.__resolveHome(repo.folder);
+        console.debug(`refreshing ${state.name}...`);
+        const folderPath = node.__resolveHome(state.folder);
 
         if (!node.__fs_existsSync(folderPath)) {
-            Reducer.setFolderWarning(repo, 'folder does not exist');
+            Reducer.setFolderWarning(state, 'folder does not exist');
             return resolve();
         }
 
@@ -37,12 +46,12 @@ function __refreshRepository (repo) {
             const __error = git.extractError(err);
             console.log(__error)
             if (git.isUninitializedGitFolderError(__error)) {
-                Reducer.setFolderWarning(repo, 'git folder is uninitialized');
+                Reducer.setFolderWarning(state, 'git folder is uninitialized');
                 return resolve();
             }
             else {
-                Reducer.setFolderError(repo, __error);
-                Reducer.setSyncEnabled(repo, false);
+                Reducer.setFolderError(state, __error);
+                Reducer.setSyncEnabled(state, false);
                 return reject();
             }
         }
@@ -50,17 +59,40 @@ function __refreshRepository (repo) {
         let origin = '';
         try {
             origin = git.getOriginUrl(folderPath);
-            if (origin !== repo.origin) {
-                Reducer.setOriginError(repo, `mismatch: ${origin}`);
-                Reducer.setSyncEnabled(repo, false);
+            if (origin !== state.origin) {
+                Reducer.setOriginError(state, `mismatch: ${origin}`);
+                Reducer.setSyncEnabled(state, false);
                 return reject();
             }
         } catch (err) {
-            Reducer.setOriginError(repo, err.message || err);
-            Reducer.setSyncEnabled(repo, false);
+            Reducer.setOriginError(state, err.message || err);
+            Reducer.setSyncEnabled(state, false);
             return reject();
         }
 
         resolve();
+    });
+}
+
+function __syncRepository (state) {
+    const git = DataProvider.GitUtils;
+    const node = DataProvider.Node;
+    return new Promise((resolve, reject) => {
+
+        if (!Reducer.isSyncEnabled(state))
+            return resolve();
+
+        console.debug(`syncing ${state.name}...`);
+
+        const folderPath = node.__resolveHome(state.folder);
+        const worker = node.__fs_existsSync(folderPath) ?
+            git['sync'] : git['clone'];
+
+        worker(state.origin, folderPath)
+            .then(() => resolve())
+            .catch(err => {
+                Reducer.setCommonError(state, err);
+                reject();
+            });
     });
 }

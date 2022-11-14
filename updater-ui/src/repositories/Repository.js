@@ -1,5 +1,5 @@
 import './Repositories.css';
-import {useEffect, useReducer} from "react";
+import {useReducer} from "react";
 import * as Reducer from "../model/reducers";
 import * as Controller from "../controllers/repo";
 import Button from "../common/Button";
@@ -9,12 +9,7 @@ export default function Repository({value}) {
 
     const [state, dispatch] =
         useReducer(Reducer.reducer, Reducer.getDefaultState(value));
-    Reducer.setDispatcher(state, dispatch);
-
-    useEffect(() => {
-        Controller.refresh(state).then(() => {});
-    // eslint-disable-next-line
-    }, []);
+    Reducer.createDispatcher(state, dispatch);
 
     return <div className={'repo-root'}>
         <div className={'repo-info'}>
@@ -52,6 +47,7 @@ function ButtonSync({state}) {
     const {status} = state || {};
     const enabled = Reducer.isSyncEnabled(state) && status === Status.Idle;
     return <Button className={'repo-btn-sync'}
+                   onClick={() => Controller.sync(state)}
                    enabled={enabled}>
         {status === Status.Syncing ? 'Syncing...' : 'Sync'}
     </Button>

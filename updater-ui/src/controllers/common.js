@@ -13,3 +13,10 @@ export async function refreshAll(repos) {
             .then(() => RepoBehavior.refresh(repo))
     );
 }
+export async function syncAll(repos) {
+    let chain = Promise.resolve().then(() => pendingAll(repos));
+    repos.forEach(repo =>
+        chain = chain
+            .then(() => RepoBehavior.sync(repo))
+    );
+}

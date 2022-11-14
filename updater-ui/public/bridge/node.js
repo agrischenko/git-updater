@@ -3,6 +3,6 @@ window.__NodeMock = {
         return folder;
     },
     __fs_existsSync: function (folder) {
-        return true;
+        return false;
     }
 }

@@ -8,7 +8,23 @@ window.__GitMock = (function () {
     }
 
     async function clone (gitUrl, destPath) {
-        return 'ok';
+        console.log('clone ', gitUrl, 'into', destPath);
+        return new Promise((resolve, reject) => {
+           setTimeout(() => {
+               console.log('cloned');
+               resolve();
+           }, 1000);
+        });
+    }
+
+    async function sync (gitUrl, destPath) {
+        console.log('sync', gitUrl, 'in', destPath);
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                console.log('synced');
+                resolve();
+            }, 1000);
+        });
     }
 
     const ERROR_GIT = '.git';
@@ -24,6 +40,7 @@ window.__GitMock = (function () {
     return {
         isGitFolder,
         clone,
+        sync,
         getOriginUrl,
         extractError,
         isUninitializedGitFolderError
