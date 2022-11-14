@@ -1,69 +1,62 @@
 import DataProvider from '../DataProvider';
-import * as RepoReducers from "../model/reducers";
+import * as Reducer from "../model/reducers";
 import {Status} from "../model/status";
 
-const {ActionType} = RepoReducers;
-
-export function refresh(repo) {
-    const dispatch = RepoReducers.getDispather(repo);
-    dispatch({type: ActionType.setFolderError, value: ''});
-    dispatch({type: ActionType.setOriginError, value: ''});
-    dispatch({type: ActionType.setFolderWarning, value: ''});
-    dispatch({type: ActionType.setOriginWarning, value: ''});
-    dispatch({type: ActionType.setCommonError, value: ''});
-
+export function refresh(state) {
+    Reducer.setFolderError(state, '');
+    Reducer.setOriginError(state, '');
+    Reducer.setFolderWarning(state, '');
+    Reducer.setOriginWarning(state, '');
+    Reducer.setCommonError(state, '');
 
     return Promise.resolve()
-        .then(() => RepoReducers.setStatus(repo, Status.Refreshing))
-        .then(() => __refreshRepository(repo))
-        .then(() => RepoReducers.setStatus(repo, Status.Idle));
+        .then(() => Reducer.setStatus(state, Status.Refreshing))
+        .then(() => __refreshRepository(state))
+        .catch(() => {})
+        .finally(() => Reducer.setStatus(state, Status.Idle));
 }
 
 function __refreshRepository (repo) {
     const git = DataProvider.GitUtils;
     const node = DataProvider.Node;
-    const dispatch = RepoReducers.getDispather(repo);
 
-    console.debug(`refreshing ${repo.name}...`);
-    const folderPath = node.__resolveHome(repo.folder);
+    return new Promise((resolve, reject) => {
 
-    if (!node.__fs_existsSync(folderPath)) {
-        return dispatch({
-            type: ActionType.setFolderWarning,
-            value: 'folder does not exist'
-        });
-    }
+        console.debug(`refreshing ${repo.name}...`);
+        const folderPath = node.__resolveHome(repo.folder);
 
-    try {
-        git.isGitFolder(folderPath);
-    } catch (err) {
-        const __error = git.extractError(err);
-        console.log(__error)
-        if (git.isUninitializedGitFolderError(__error)) {
-            return dispatch({
-                type: ActionType.setFolderWarning,
-                value: 'git folder is uninitialized'
-            });
-        } else {
-            return dispatch({
-                type: RepoReducers.ActionType.setFolderWarning,
-                value: __error
-            });
+        if (!node.__fs_existsSync(folderPath)) {
+            Reducer.setFolderWarning(repo, 'folder does not exist');
+            return resolve();
         }
-    }
 
-    let origin = '';
-    try {
-        origin = git.getOriginUrl(folderPath);
-        if (origin !== repo.origin)
-            return dispatch({
-                type: ActionType.setOriginError,
-                value: `mismatch: ${origin}`
-            });
-    } catch (err) {
-        return dispatch({
-            type: ActionType.setOriginError,
-            value: err.message || err
-        });
-    }
+        try {
+            git.isGitFolder(folderPath);
+        } catch (err) {
+            const __error = git.extractError(err);
+            console.log(__error)
+            if (git.isUninitializedGitFolderError(__error)) {
+                Reducer.setFolderWarning(repo, 'git folder is uninitialized');
+                return resolve();
+            }
+            else {
+                Reducer.setFolderError(repo, __error);
+                return reject();
+            }
+        }
+
+        let origin = '';
+        try {
+            origin = git.getOriginUrl(folderPath);
+            if (origin !== repo.origin) {
+                Reducer.setOriginError(repo, `mismatch: ${origin}`);
+                return reject();
+            }
+        } catch (err) {
+            Reducer.setOriginError(repo, err.message || err);
+            return reject();
+        }
+
+        resolve();
+    });
 }

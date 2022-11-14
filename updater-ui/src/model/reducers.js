@@ -1,5 +1,7 @@
 import {Status} from "./status";
 
+let repoDispatchers = new Map();
+
 export const ActionType = {
     setStatus: 'setStatus',
     setFolderError: 'setFolderError',
@@ -32,9 +34,7 @@ export function getDefaultState (repo) {
     return Object.assign({}, repo, {status: Status.Idle})
 }
 
-let repoDispatchers = new Map();
-
-export function getDispather (state) {
+function getDispather (state) {
     return repoDispatchers.get(state.name);
 }
 
@@ -47,4 +47,19 @@ export function setDispatcher (state, dispatch) {
 
 export function setStatus(state, status) {
     getDispather(state)({type: ActionType.setStatus, value: status});
+}
+export function setFolderWarning(state, value) {
+    getDispather(state)({type: ActionType.setFolderWarning, value});
+}
+export function setFolderError(state, value) {
+    getDispather(state)({type: ActionType.setFolderError, value});
+}
+export function setOriginWarning(state, value) {
+    getDispather(state)({type: ActionType.setOriginWarning, value});
+}
+export function setOriginError(state, value) {
+    getDispather(state)({type: ActionType.setOriginError, value});
+}
+export function setCommonError(state, value) {
+    getDispather(state)({type: ActionType.setCommonError, value});
 }
