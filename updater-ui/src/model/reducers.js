@@ -1,6 +1,6 @@
-import {Status} from "./repositories/status";
+import {Status} from "./status";
 
-export const RepoActionType = {
+export const ActionType = {
     setStatus: 'setStatus',
     setFolderError: 'setFolderError',
     setFolderWarning: 'setFolderWarning',
@@ -11,17 +11,17 @@ export const RepoActionType = {
 
 export function reducer (state, action) {
     switch(action.type) {
-        case RepoActionType.setStatus:
+        case ActionType.setStatus:
             return Object.assign({}, state, {status: action.value});
-        case RepoActionType.setFolderError:
+        case ActionType.setFolderError:
             return Object.assign({}, state, {folderError: action.value});
-        case RepoActionType.setFolderWarning:
+        case ActionType.setFolderWarning:
             return Object.assign({}, state, {folderWarning: action.value});
-        case RepoActionType.setOriginError:
+        case ActionType.setOriginError:
             return Object.assign({}, state, {originError: action.value});
-        case RepoActionType.setOriginWarning:
+        case ActionType.setOriginWarning:
             return Object.assign({}, state, {originWarning: action.value});
-        case RepoActionType.setCommonError:
+        case ActionType.setCommonError:
             return Object.assign({}, state, {commonError: action.value});
         default:
             throw new Error();
@@ -46,5 +46,5 @@ export function setDispatcher (state, dispatch) {
 }
 
 export function setStatus(state, status) {
-    getDispather(state)({type: RepoActionType.setStatus, value: status});
+    getDispather(state)({type: ActionType.setStatus, value: status});
 }

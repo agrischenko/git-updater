@@ -1,14 +1,16 @@
 import DataProvider from '../DataProvider';
-import * as RepoReducers from "../reducers";
-import {Status} from "./status";
+import * as RepoReducers from "../model/reducers";
+import {Status} from "../model/status";
+
+const {ActionType} = RepoReducers;
 
 export function refresh(repo) {
     const dispatch = RepoReducers.getDispather(repo);
-    dispatch({type: RepoReducers.RepoActionType.setFolderError, value: ''});
-    dispatch({type: RepoReducers.RepoActionType.setOriginError, value: ''});
-    dispatch({type: RepoReducers.RepoActionType.setFolderWarning, value: ''});
-    dispatch({type: RepoReducers.RepoActionType.setOriginWarning, value: ''});
-    dispatch({type: RepoReducers.RepoActionType.setCommonError, value: ''});
+    dispatch({type: ActionType.setFolderError, value: ''});
+    dispatch({type: ActionType.setOriginError, value: ''});
+    dispatch({type: ActionType.setFolderWarning, value: ''});
+    dispatch({type: ActionType.setOriginWarning, value: ''});
+    dispatch({type: ActionType.setCommonError, value: ''});
 
 
     return Promise.resolve()
@@ -27,7 +29,7 @@ function __refreshRepository (repo) {
 
     if (!node.__fs_existsSync(folderPath)) {
         return dispatch({
-            type: RepoReducers.RepoActionType.setFolderWarning,
+            type: ActionType.setFolderWarning,
             value: 'folder does not exist'
         });
     }
@@ -39,12 +41,12 @@ function __refreshRepository (repo) {
         console.log(__error)
         if (git.isUninitializedGitFolderError(__error)) {
             return dispatch({
-                type: RepoReducers.RepoActionType.setFolderWarning,
+                type: ActionType.setFolderWarning,
                 value: 'git folder is uninitialized'
             });
         } else {
             return dispatch({
-                type: RepoReducers.RepoActionType.setFolderWarning,
+                type: RepoReducers.ActionType.setFolderWarning,
                 value: __error
             });
         }
@@ -55,12 +57,12 @@ function __refreshRepository (repo) {
         origin = git.getOriginUrl(folderPath);
         if (origin !== repo.origin)
             return dispatch({
-                type: RepoReducers.RepoActionType.setOriginError,
+                type: ActionType.setOriginError,
                 value: `mismatch: ${origin}`
             });
     } catch (err) {
         return dispatch({
-            type: RepoReducers.RepoActionType.setOriginError,
+            type: ActionType.setOriginError,
             value: err.message || err
         });
     }

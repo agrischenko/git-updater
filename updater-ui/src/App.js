@@ -1,9 +1,9 @@
 import './App.css';
+import {useEffect, useState} from "react";
+import DataProvider from './DataProvider';
+import * as Controller from "./controllers/common";
 import Button from './common/Button';
 import Repositories from './repositories';
-import DataProvider from './DataProvider';
-import {useEffect, useState} from "react";
-import {RefreshAll} from "./behavior";
 
 function App() {
 
@@ -19,7 +19,7 @@ function App() {
             <h3>Git Repo Updater</h3>
             <div className={'Header'}>
                 <Button className={'rounded'}
-                        onClick={() => RefreshAll(repos)}>
+                        onClick={() => Controller.refreshAll(repos)}>
                     Refresh All
                 </Button>
                 <Button className={'rounded'}>Sync All</Button>
