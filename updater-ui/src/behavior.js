@@ -1,14 +1,15 @@
 import {Status} from "./repositories/status";
-import {refreshRepository, setRepositoryStatus} from "./repositories/behavior";
+import * as RepoBehavior from "./repositories/behavior";
+import * as RepoReducers from "./reducers";
 
 function pendingAll(repos) {
-    repos.forEach(repo => setRepositoryStatus(repo, Status.Pending));
+    repos.forEach(repo => RepoReducers.setStatus(repo, Status.Pending));
 }
 
 export async function RefreshAll(repos) {
     let chain = Promise.resolve().then(() => pendingAll(repos));
     repos.forEach(repo =>
         chain = chain
-            .then(() => refreshRepository(repo))
+            .then(() => RepoBehavior.refresh(repo))
     );
 }

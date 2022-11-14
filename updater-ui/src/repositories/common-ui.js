@@ -1,36 +1,38 @@
 import Button from "../common/Button";
 import {Status} from "./status";
-import {refreshRepository} from "./behavior";
+import * as RepoBehavior from "./behavior";
 
-export function GitSource({repo, error, warning}) {
+export function GitSource({state}) {
     return <>
-        <div className={'repo-source'}>{repo['origin']}</div>
-        <Issues error={error} warning={warning}/>
+        <div className={'repo-source'}>{state['origin']}</div>
+        <Issues warning={state.originWarning} error={state.originError}/>
     </>;
 }
 
-export function Folder({repo, error, warning}) {
+export function Folder({state}) {
     return <>
-        <div className={'repo-folder'}>{repo['folder']}</div>
-        <Issues error={error} warning={warning}/>
+        <div className={'repo-folder'}>{state['folder']}</div>
+        <Issues warning={state.folderWarning} error={state.folderError}/>
     </>
 }
 
-export function Branches({repo}) {
+export function Branches({state}) {
     return <div className={'repo-branches'}>
-        {`${repo.source} => ${repo.dest}`}
+        {`${state.source} => ${state.dest}`}
     </div>;
 }
 
-export function ButtonSync({active}) {
+export function ButtonSync({state}) {
+    const {status} = state || {};
     return <Button className={'repo-btn-sync'}>
-        {active ? 'Syncing...' : 'Sync'}
+        {status === Status.Syncing ? 'Syncing...' : 'Sync'}
     </Button>
 }
 
-export function Header({repo, status}) {
+export function Header({state}) {
     let refreshTitle = 'refresh ⟳';
-    switch (status) {
+    const {name, status} = state;
+    switch (state.status) {
         case Status.Pending:
             refreshTitle = 'pending...';
             break;
@@ -43,9 +45,9 @@ export function Header({repo, status}) {
     }
 
     return <div className={'repo-header'}>
-        <div className={'repo-title'}>{repo.name}</div>
+        <div className={'repo-title'}>{name}</div>
         <div className={'repo-refresh'} data-enabled={status === Status.Idle}
-             onClick={() => refreshRepository(repo)}>
+             onClick={() => RepoBehavior.refresh(state)}>
             {refreshTitle}
         </div>
     </div>;

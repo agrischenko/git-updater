@@ -3,7 +3,7 @@ import Button from './common/Button';
 import Repositories from './repositories';
 import DataProvider from './DataProvider';
 import {useEffect, useState} from "react";
-import {RefreshAll} from "./common-behavior";
+import {RefreshAll} from "./behavior";
 
 function App() {
 

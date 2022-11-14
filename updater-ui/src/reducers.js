@@ -1,3 +1,5 @@
+import {Status} from "./repositories/status";
+
 export const RepoActionType = {
     setStatus: 'setStatus',
     setFolderError: 'setFolderError',
@@ -7,7 +9,7 @@ export const RepoActionType = {
     setCommonError: 'setCommonError',
 };
 
-export function repoReducer (state, action) {
+export function reducer (state, action) {
     switch(action.type) {
         case RepoActionType.setStatus:
             return Object.assign({}, state, {status: action.value});
@@ -26,19 +28,23 @@ export function repoReducer (state, action) {
     }
 }
 
+export function getDefaultState (repo) {
+    return Object.assign({}, repo, {status: Status.Idle})
+}
+
 let repoDispatchers = new Map();
 
-export function getRepoDispathers () {
-    return repoDispatchers;
+export function getDispather (state) {
+    return repoDispatchers.get(state.name);
 }
 
-export function getRepoDispather (repo) {
-    return repoDispatchers.get(repo.name);
-}
-
-export function setRepoDispatcher (key, dispatch) {
-    if (!!repoDispatchers.get(key))
+export function setDispatcher (state, dispatch) {
+    const {name} = state;
+    if (!!repoDispatchers.get(name))
         return;
-    repoDispatchers.set(key, dispatch);
+    repoDispatchers.set(name, dispatch);
 }
 
+export function setStatus(state, status) {
+    getDispather(state)({type: RepoActionType.setStatus, value: status});
+}
