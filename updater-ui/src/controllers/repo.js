@@ -22,7 +22,7 @@ export function sync(state) {
         .then(() => refresh(state))
         .then(() => Reducer.setStatus(state, Status.Syncing))
         .then(() => __syncRepository(state))
-        .catch(() => {})
+        .catch(err => console.error(err))
         .finally(() => Reducer.setStatus(state, Status.Idle));
 }
 

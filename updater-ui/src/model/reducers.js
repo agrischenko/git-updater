@@ -3,48 +3,8 @@ import {Status} from "./status";
 let repoDispatchers = new Map();
 let repoItems = new Map();
 
-function getRepo(state) {
-    return repoItems.get(state.name) || {};
-}
-
-export const ActionType = {
-    setStatus: 'setStatus',
-    setFolderError: 'setFolderError',
-    setFolderWarning: 'setFolderWarning',
-    setOriginError: 'setOriginError',
-    setOriginWarning: 'setOriginWarning',
-    setCommonError: 'setCommonError',
-    setSyncEnabled: false,
-};
-
 export function reducer (state, action) {
-    switch(action.type) {
-        case ActionType.setStatus:
-            state = Object.assign({}, state, {status: action.value});
-            break;
-        case ActionType.setFolderError:
-            state = Object.assign({}, state, {folderError: action.value});
-            break;
-        case ActionType.setFolderWarning:
-            state = Object.assign({}, state, {folderWarning: action.value});
-            break;
-        case ActionType.setOriginError:
-            state = Object.assign({}, state, {originError: action.value});
-            break;
-        case ActionType.setOriginWarning:
-            state = Object.assign({}, state, {originWarning: action.value});
-            break;
-        case ActionType.setCommonError:
-            state = Object.assign({}, state, {commonError: action.value});
-            break;
-        case ActionType.setSyncEnabled:
-            state = Object.assign({}, state, {syncEnabled: action.value});
-            break;
-        default:
-            throw new Error();
-    }
-    updateRepo(state);
-    return state;
+    return Object.assign({}, state, action.state);
 }
 
 export function getDefaultState (repo) {
@@ -63,31 +23,37 @@ export function createDispatcher (state, dispatch) {
     updateRepo(state);
 }
 
-export function updateRepo (state) {
-    repoItems.set(state.name, state);
+function getRepo (name) {
+    return repoItems.get(name) || {};
 }
 
-export function setStatus(state, status) {
-    getDispather(state)({type: ActionType.setStatus, value: status});
+export function updateRepo (name, state) {
+    const newState = Object.assign({}, getRepo(name), state);
+    repoItems.set(name, newState);
+    return newState;
 }
-export function setFolderWarning(state, value) {
-    getDispather(state)({type: ActionType.setFolderWarning, value});
+
+export function setStatus (state, status) {
+    getDispather(state)({state: updateRepo(state.name, {status})});
 }
-export function setFolderError(state, value) {
-    getDispather(state)({type: ActionType.setFolderError, value});
+export function setFolderWarning (state, folderWarning) {
+    getDispather(state)({state: updateRepo(state.name, {folderWarning})});
 }
-export function setOriginWarning(state, value) {
-    getDispather(state)({type: ActionType.setOriginWarning, value});
+export function setFolderError (state, folderError) {
+    getDispather(state)({state: updateRepo(state.name, {folderError})});
 }
-export function setOriginError(state, value) {
-    getDispather(state)({type: ActionType.setOriginError, value});
+export function setOriginWarning (state, originWarning) {
+    getDispather(state)({state: updateRepo(state.name, {originWarning})});
 }
-export function setCommonError(state, value) {
-    getDispather(state)({type: ActionType.setCommonError, value});
+export function setOriginError (state, originError) {
+    getDispather(state)({state: updateRepo(state.name, {originError})});
 }
-export function setSyncEnabled(state, value) {
-    getDispather(state)({type: ActionType.setSyncEnabled, value});
+export function setCommonError (state, commonError) {
+    getDispather(state)({state: updateRepo(state.name, {commonError})});
 }
-export function isSyncEnabled(state) {
-    return getRepo(state).syncEnabled === true;
+export function setSyncEnabled (state, syncEnabled) {
+    getDispather(state)({state: updateRepo(state.name, {syncEnabled})});
+}
+export function isSyncEnabled (state) {
+    return !!getRepo(state.name).syncEnabled;
 }

@@ -9,14 +9,12 @@ function pendingAll(repos) {
 export async function refreshAll(repos) {
     let chain = Promise.resolve().then(() => pendingAll(repos));
     repos.forEach(repo =>
-        chain = chain
-            .then(() => RepoBehavior.refresh(repo))
+        chain = chain.then(() => RepoBehavior.refresh(repo))
     );
 }
 export async function syncAll(repos) {
     let chain = Promise.resolve().then(() => pendingAll(repos));
     repos.forEach(repo =>
-        chain = chain
-            .then(() => RepoBehavior.sync(repo))
+        chain = chain.then(() => RepoBehavior.sync(repo))
     );
 }
