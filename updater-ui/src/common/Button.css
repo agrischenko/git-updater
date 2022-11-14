@@ -15,6 +15,12 @@
     user-select: none;
 }
 
+.def-button[data-enabled="false"] {
+    pointer-events: none;
+    color: gray;
+    cursor: none;
+}
+
 .def-button:hover {
     background: #3672A4;
 }

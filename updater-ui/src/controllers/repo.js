@@ -8,6 +8,7 @@ export function refresh(state) {
     Reducer.setFolderWarning(state, '');
     Reducer.setOriginWarning(state, '');
     Reducer.setCommonError(state, '');
+    Reducer.setSyncEnabled(state, true);
 
     return Promise.resolve()
         .then(() => Reducer.setStatus(state, Status.Refreshing))
@@ -41,6 +42,7 @@ function __refreshRepository (repo) {
             }
             else {
                 Reducer.setFolderError(repo, __error);
+                Reducer.setSyncEnabled(repo, false);
                 return reject();
             }
         }
@@ -50,10 +52,12 @@ function __refreshRepository (repo) {
             origin = git.getOriginUrl(folderPath);
             if (origin !== repo.origin) {
                 Reducer.setOriginError(repo, `mismatch: ${origin}`);
+                Reducer.setSyncEnabled(repo, false);
                 return reject();
             }
         } catch (err) {
             Reducer.setOriginError(repo, err.message || err);
+            Reducer.setSyncEnabled(repo, false);
             return reject();
         }
 

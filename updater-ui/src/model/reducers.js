@@ -9,6 +9,7 @@ export const ActionType = {
     setOriginError: 'setOriginError',
     setOriginWarning: 'setOriginWarning',
     setCommonError: 'setCommonError',
+    setSyncEnabled: false,
 };
 
 export function reducer (state, action) {
@@ -25,6 +26,8 @@ export function reducer (state, action) {
             return Object.assign({}, state, {originWarning: action.value});
         case ActionType.setCommonError:
             return Object.assign({}, state, {commonError: action.value});
+        case ActionType.setSyncEnabled:
+            return Object.assign({}, state, {syncEnabled: action.value});
         default:
             throw new Error();
     }
@@ -62,4 +65,10 @@ export function setOriginError(state, value) {
 }
 export function setCommonError(state, value) {
     getDispather(state)({type: ActionType.setCommonError, value});
+}
+export function setSyncEnabled(state, value) {
+    getDispather(state)({type: ActionType.setSyncEnabled, value});
+}
+export function isSyncEnabled(state) {
+    return state.syncEnabled === true;
 }

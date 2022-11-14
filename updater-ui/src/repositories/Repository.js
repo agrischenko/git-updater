@@ -50,7 +50,9 @@ function Branches({state}) {
 
 function ButtonSync({state}) {
     const {status} = state || {};
-    return <Button className={'repo-btn-sync'}>
+    const enabled = Reducer.isSyncEnabled(state) && status === Status.Idle;
+    return <Button className={'repo-btn-sync'}
+                   enabled={enabled}>
         {status === Status.Syncing ? 'Syncing...' : 'Sync'}
     </Button>
 }

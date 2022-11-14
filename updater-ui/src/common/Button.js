@@ -1,5 +1,8 @@
 import './Button.css';
 
-export default function Button (props) {
-    return <div {...props} className={`def-button ${props.className}`}>{props.children}</div>
+export default function Button ({enabled, className, children, onClick}) {
+    return <div data-enabled={enabled} onClick={onClick}
+                className={`def-button ${className}`}>
+        {children}
+    </div>
 }
